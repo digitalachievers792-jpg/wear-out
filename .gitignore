@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Env / secrets (NEVER commit real .env)
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Build output
+dist/
+frontend/dist/
+
+# Runtime data & uploaded images
+backend/uploads/
+backend/devdata/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build error logs
+*.err

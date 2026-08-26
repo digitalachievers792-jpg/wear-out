@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <g fill="none" stroke="#d8d8d8" stroke-width="5">
+    <path d="M95 95 q25 40 50 0"/>
+    <line x1="120" y1="95" x2="120" y2="135"/>
+  </g>
+  <circle cx="120" cy="145" r="14" fill="#cfcfcf" stroke="#9aa0a6" stroke-width="3"/>
+  <text x="120" y="225" fill="#c9a24b" font-family="Arial" font-size="18" text-anchor="middle">LOCKET</text>
+</svg>

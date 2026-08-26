@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <g fill="#0d0d0d" stroke="#c9a24b" stroke-width="4">
+    <path d="M70 40 L40 70 L60 95 L80 80 L80 200 L160 200 L160 80 L180 95 L200 70 L170 40 L140 55 L100 55 Z"/>
+  </g>
+  <circle cx="120" cy="75" r="20" fill="none" stroke="#c9a24b" stroke-width="4"/>
+  <text x="120" y="225" fill="#c9a24b" font-family="Arial" font-size="20" text-anchor="middle">SHIRT</text>
+</svg>

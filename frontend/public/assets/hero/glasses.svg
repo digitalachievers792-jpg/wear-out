@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <g fill="#1a1408" stroke="#c9a24b" stroke-width="5">
+    <rect x="40" y="95" width="70" height="22" rx="11"/>
+    <rect x="130" y="95" width="70" height="22" rx="11"/>
+    <rect x="95" y="80" width="50" height="16" rx="8" fill="#c9a24b"/>
+  </g>
+  <text x="120" y="225" fill="#c9a24b" font-family="Arial" font-size="18" text-anchor="middle">GLASSES</text>
+</svg>

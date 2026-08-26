@@ -1,0 +1,54 @@
+import { useConfig } from '../context/ConfigContext';
+
+export default function Contact() {
+  const config = useConfig();
+  const c = config?.contact || {};
+  const links = [
+    c.whatsapp && {
+      label: 'WhatsApp',
+      desc: 'Chat with us directly',
+      href: `https://wa.me/${c.whatsapp}`,
+    },
+    c.email && {
+      label: 'Email',
+      desc: 'Send us a message',
+      href: `mailto:${c.email}`,
+    },
+    c.facebook && {
+      label: 'Facebook',
+      desc: 'Follow our page',
+      href: c.facebook,
+    },
+    c.instagram && {
+      label: 'Instagram',
+      desc: 'Follow our style',
+      href: c.instagram,
+    },
+    c.whatsappCommunity && {
+      label: 'WhatsApp Community',
+      desc: 'Join for drops & updates',
+      href: c.whatsappCommunity,
+    },
+  ].filter(Boolean);
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-16">
+      <h1 className="font-display text-6xl text-metallic tracking-widest">CONTACT</h1>
+      <p className="text-slate-500 mt-3 mb-10">We'd love to hear from you. Reach out through any channel below.</p>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {links.map((l) => (
+          <a
+            key={l.label}
+            href={l.href}
+            target="_blank"
+            rel="noreferrer"
+            className="group bg-white border border-gold/20 rounded-xl p-6 hover:border-gold/50 transition-colors shadow-sm"
+          >
+            <p className="text-gold font-semibold text-lg group-hover:underline">{l.label}</p>
+            <p className="text-slate-500 text-sm mt-1">{l.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}

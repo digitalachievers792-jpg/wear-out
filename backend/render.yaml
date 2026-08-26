@@ -1,0 +1,46 @@
+# Render deployment config (free web service)
+# Set the following environment variables in the Render dashboard:
+#   NODE_ENV=production
+#   MONGO_URI=<your MongoDB Atlas connection string>
+#   JWT_SECRET=<a long random string>
+#   ADMIN_EMAIL=admin@wearout.store
+#   ADMIN_PASSWORD=<strong password>
+#   CONTACT_WHATSAPP=923264506414
+#   CONTACT_EMAIL=digitalachievers792@gmail.com
+#   CONTACT_FACEBOOK=https://www.facebook.com/share/19MAQRqnwP/
+#   CONTACT_INSTAGRAM=https://www.instagram.com/wearoutclothing1?utm_source=qr&igsi=aXluM253NnAyM3B1
+#   CONTACT_WHATSAPP_COMMUNITY=https://chat.whatsapp.com/Fm1YNowj2lS3xivYuMKxQS
+#   DELIVERY_CHARGE=200
+
+services:
+  - type: web
+    name: wearout-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CONTACT_WHATSAPP
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: CONTACT_FACEBOOK
+        sync: false
+      - key: CONTACT_INSTAGRAM
+        sync: false
+      - key: CONTACT_WHATSAPP_COMMUNITY
+        sync: false
+      - key: DELIVERY_CHARGE
+        sync: false

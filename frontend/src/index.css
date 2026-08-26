@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-mist text-slate-800 font-body antialiased;
+  margin: 0;
+  overflow-x: clip;
+}
+
+/* Metallic gold text used for the brand wordmark (readable on light bg) */
+.text-metallic {
+  background: linear-gradient(180deg, #c9a227 0%, #a8740f 42%, #6b4f12 72%, #b8860b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Dark→silver shaded wordmark (monochrome premium finish) */
+.text-shade {
+  background: linear-gradient(180deg, #0f172a 0%, #334155 50%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Futuristic motorsport metallic wordmark: extra-bold, 3D bevel + metallic sheen */
+.hero-metal {
+  background: linear-gradient(180deg, #fff7da 0%, #f3d987 22%, #d4a72a 46%, #9c7716 66%, #f6e6a6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(70, 48, 12, 0.45);
+  text-shadow:
+    0 1px 0 #b8911f,
+    0 2px 0 #9c7716,
+    0 3px 0 #7c5e12,
+    0 4px 0 #5e470d,
+    0 5px 0 #46360a,
+    0 8px 9px rgba(0, 0, 0, 0.5);
+}
+
+.bg-metallic {
+  background: linear-gradient(180deg, #f3e3b0 0%, #c9a24b 45%, #8a6a24 70%, #e7c977 100%);
+}
+
+/* Thin scrollbar for light theme */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #e7e2d6;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a24b;
+  border-radius: 6px;
+}
+
+/* Reusable admin (light) surface */
+.admin-surface {
+  @apply bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200;
+}
+
+.btn-gold {
+  @apply bg-gold hover:bg-gold-light text-ink font-semibold px-5 py-2.5 rounded-md transition-colors duration-200;
+}
+
+.btn-outline {
+  @apply border border-gold text-gold hover:bg-gold hover:text-ink font-semibold px-5 py-2.5 rounded-md transition-colors duration-200;
+}
+
+.input-field {
+  @apply w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold;
+}
