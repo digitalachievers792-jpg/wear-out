@@ -2,7 +2,18 @@
   command = "npm run build"
   publish = "dist"
 
-# SPA fallback: send all routes to index.html (React Router handles them)
+[[redirects]]
+  from = "/api/*"
+  to = "https://wear-out.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://wear-out.onrender.com/uploads/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
