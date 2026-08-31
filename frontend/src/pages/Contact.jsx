@@ -33,7 +33,7 @@ export default function Contact() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
-      <h1 className="font-display text-6xl text-metallic tracking-widest">CONTACT</h1>
+      <h1 className="font-display text-4xl sm:text-6xl text-metallic tracking-widest">CONTACT</h1>
       <p className="text-slate-500 mt-3 mb-10">We'd love to hear from you. Reach out through any channel below.</p>
       <div className="grid sm:grid-cols-2 gap-4">
         {links.map((l) => (

@@ -36,6 +36,10 @@ export default function Checkout() {
     api.getConfig().then(setConfig).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (done) window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [done]);
+
   if (items.length === 0 && !done) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">

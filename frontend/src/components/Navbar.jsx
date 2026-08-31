@@ -31,8 +31,10 @@ export default function Navbar() {
   };
 
   const linkClass = ({ isActive }) =>
-    `px-3 py-2 text-sm uppercase tracking-wide transition-colors ${
-      isActive ? 'text-gold' : 'text-slate-600 hover:text-gold'
+    `px-3 py-1.5 text-xs uppercase tracking-wide border-2 rounded-md transition-all duration-200 ${
+      isActive
+        ? 'border-black bg-black text-white'
+        : 'border-black text-black hover:bg-black hover:text-white'
     }`;
 
   return (
@@ -53,6 +55,9 @@ export default function Navbar() {
           </NavLink>
           <NavLink to="/contact" className={linkClass}>
             Contact
+          </NavLink>
+          <NavLink to="/bulk-orders" className={linkClass}>
+            Bulk Orders
           </NavLink>
         </nav>
 
@@ -94,8 +99,8 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-white border-t border-gold/20 px-4 py-3 space-y-1">
-          <form onSubmit={onSearch} className="mb-2">
+        <div className="md:hidden bg-white border-t border-gold/20 px-4 py-3">
+          <form onSubmit={onSearch} className="mb-3">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -103,17 +108,22 @@ export default function Navbar() {
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold/60"
             />
           </form>
-          {realCategories.map((c) => (
-            <NavLink key={c.name} to={c.to} className={linkClass} onClick={() => setOpen(false)}>
-              {c.name}
+          <div className="flex flex-col gap-2">
+            {realCategories.map((c) => (
+              <NavLink key={c.name} to={c.to} className={linkClass} onClick={() => setOpen(false)}>
+                {c.name}
+              </NavLink>
+            ))}
+            <NavLink to="/about" className={linkClass} onClick={() => setOpen(false)}>
+              About
             </NavLink>
-          ))}
-          <NavLink to="/about" className={linkClass} onClick={() => setOpen(false)}>
-            About
-          </NavLink>
-          <NavLink to="/contact" className={linkClass} onClick={() => setOpen(false)}>
-            Contact
-          </NavLink>
+            <NavLink to="/contact" className={linkClass} onClick={() => setOpen(false)}>
+              Contact
+            </NavLink>
+            <NavLink to="/bulk-orders" className={linkClass} onClick={() => setOpen(false)}>
+              Bulk Orders
+            </NavLink>
+          </div>
         </div>
       )}
     </header>

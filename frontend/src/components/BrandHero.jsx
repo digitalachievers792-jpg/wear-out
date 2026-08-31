@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, animate } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 function HeroLetter({ progress, index, char }) {
@@ -60,12 +60,14 @@ export default function BrandHero() {
   const taglineOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
   const taglineY = useTransform(scrollYProgress, [0.7, 1], [30, 0]);
 
-  // Featured image reveals (fades + scales in) as the user starts scrolling.
-  const imgOpacity = useTransform(scrollYProgress, [0, 0.35], [0, 1]);
-  const imgScale = useTransform(scrollYProgress, [0, 0.35], [1.2, 1]);
-
-  // Scroll hint hides as soon as scrolling begins / the image shows.
-  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
+  useEffect(() => {
+    const target = window.innerHeight * 1.4;
+    animate(0, target, {
+      duration: 2.5,
+      ease: [0.25, 0.1, 0.25, 1],
+      onUpdate: (v) => window.scrollTo(0, v),
+    });
+  }, []);
 
   const word = 'WEAR OUT';
   const sectionHeight = mobile ? '180vh' : '260vh';
@@ -74,13 +76,13 @@ export default function BrandHero() {
     <section ref={ref} style={{ height: sectionHeight }} className="relative bg-gradient-to-b from-bone to-mist">
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col items-center justify-center text-center px-4">
         {/* Scroll-revealed featured image backdrop — full width, kept sharp */}
-        <motion.div style={{ opacity: imgOpacity, scale: imgScale }} className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0">
           <img
             src="/assets/featured-hero.png"
             alt="Wear Out featured collection"
             className="w-full h-full object-cover object-center"
           />
-        </motion.div>
+        </div>
         <div className="absolute inset-0 z-0 bg-mist/15" />
 
         <div className="relative z-10 flex flex-col items-center justify-center px-4">
@@ -114,15 +116,7 @@ export default function BrandHero() {
           </div>
         </motion.div>
 
-        <motion.div
-          style={{ opacity: scrollHintOpacity }}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 text-slate-400 text-xs uppercase tracking-[0.3em] z-20"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8 }}
-        >
-          Scroll
-        </motion.div>
-      </div>
+        </div>
       </div>
     </section>
   );

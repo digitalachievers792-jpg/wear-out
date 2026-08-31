@@ -18,9 +18,13 @@ const productSchema = new mongoose.Schema(
     },
     // owner-set star rating (0–5, allows halves)
     rating: { type: Number, default: 0, min: 0, max: 5 },
+    gender: { type: String, enum: ['Male', 'Female', 'Unisex'], default: 'Unisex' },
     image: { type: String, default: '' }, // stored filename in /uploads/products
     inStock: { type: Boolean, default: true },
     featured: { type: Boolean, default: false },
+    featuredPending: { type: Boolean, default: false },
+    shopkeeper: { type: mongoose.Schema.Types.ObjectId, ref: 'Shopkeeper', default: null },
+    shopName: { type: String, default: '' },
   },
   { timestamps: true }
 );

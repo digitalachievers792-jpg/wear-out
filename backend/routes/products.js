@@ -17,6 +17,7 @@ router.post(
     body('name').isString().trim().notEmpty(),
     body('price').isFloat({ min: 0 }),
     body('category').isIn(['Shirts', 'Trousers', 'Caps', 'Watches', 'Accessories', 'Shoes', 'Un Stitch']),
+    body('gender').optional().isIn(['Male', 'Female', 'Unisex']),
     body('rating').optional().isFloat({ min: 0, max: 5 }),
   ],
   handleValidation,

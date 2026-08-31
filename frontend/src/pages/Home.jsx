@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import BrandHero from '../components/BrandHero';
 import api from '../api';
 import { useConfig } from '../context/ConfigContext';
+import { CATEGORIES } from '../categories';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -53,18 +54,20 @@ export default function Home() {
       <section className="bg-white border-y border-gold/20">
         <div className="max-w-7xl mx-auto px-4 py-14">
           <h2 className="font-display text-4xl text-metallic text-center mb-10 tracking-wider">SHOP BY CATEGORY</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {realCats.map((c) => (
-              <Link
-                key={c.name}
-                to={`/${c.name.toLowerCase()}`}
-                className="group relative h-40 rounded-xl overflow-hidden border border-gold/20 flex items-center justify-center bg-mist hover:border-gold/60 transition-colors"
-              >
-                <span className="font-display text-3xl text-slate-700 group-hover:text-gold tracking-widest transition-colors">
-                  {c.name.toUpperCase()}
-                </span>
-              </Link>
-            ))}
+          <div className="grid grid-cols-3 md:flex md:flex-wrap md:justify-center gap-3">
+            {realCats.map((c) => {
+              const cat = CATEGORIES.find((x) => x.value === c.name);
+              const slug = cat ? cat.slug : c.name.toLowerCase();
+              return (
+                <Link
+                  key={c.name}
+                  to={`/${slug}`}
+                  className="block border-2 border-black rounded-lg px-4 py-3 text-center font-display text-xs sm:text-sm uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all duration-200"
+                >
+                  {c.name}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

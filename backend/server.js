@@ -33,6 +33,9 @@ app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/courier', require('./routes/courier'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/seller', require('./routes/shopkeepers'));
+app.use('/api/seller', require('./routes/sellers'));
+app.use('/api/admin', require('./routes/adminShopkeepers'));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

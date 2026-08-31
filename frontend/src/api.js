@@ -2,9 +2,16 @@ import axios from 'axios';
 
 const BASE = import.meta.env.VITE_API_BASE || '/api';
 const client = axios.create({ baseURL: BASE });
+const sellerClient = axios.create({ baseURL: BASE });
 
 client.interceptors.request.use((config) => {
   const token = localStorage.getItem('wearout_admin_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+sellerClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('wearout_seller_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -55,6 +62,39 @@ export const api = {
   getCouriers: () => client.get('/courier/couriers').then((r) => r.data),
   toggleCourier: (id) => client.post(`/courier/couriers/${id}/toggle`).then((r) => r.data),
   getOptimizer: () => client.get('/courier/optimizer').then((r) => r.data),
+
+  // admin shopkeepers
+  getShopkeepers: () => client.get('/admin/shopkeepers').then((r) => r.data),
+  getPendingShopkeepers: () => client.get('/admin/shopkeepers/pending').then((r) => r.data),
+  updateShopkeeperStatus: (id, status) => client.put(`/admin/shopkeepers/${id}/status`, { status }).then((r) => r.data),
+
+  // admin featured requests
+  getFeaturedRequests: () => client.get('/admin/featured-requests').then((r) => r.data),
+  approveFeatured: (id) => client.put(`/admin/featured-requests/${id}/approve`).then((r) => r.data),
+  rejectFeatured: (id) => client.put(`/admin/featured-requests/${id}/reject`).then((r) => r.data),
+
+  // seller auth
+  sellerSignup: (data) => client.post('/seller/signup', data).then((r) => r.data),
+  sellerLogin: (email, password) => client.post('/seller/login', { email, password }).then((r) => r.data),
+  sellerGetProfile: (token) => sellerClient.get('/seller/me', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+
+  // seller products
+  sellerGetProducts: (token) => sellerClient.get('/seller/products', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  sellerCreateProduct: (token, formData) =>
+    sellerClient.post('/seller/products', formData, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+  sellerUpdateProduct: (token, id, formData) =>
+    sellerClient.put(`/seller/products/${id}`, formData, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+  sellerDeleteProduct: (token, id) => sellerClient.delete(`/seller/products/${id}`, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  sellerRequestFeatured: (token, id) => sellerClient.put(`/seller/products/${id}/request-featured`, {}, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+
+  // seller orders
+  sellerGetOrders: (token) => sellerClient.get('/seller/orders', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  sellerUpdateOrderStatus: (token, id, status) =>
+    sellerClient.put(`/seller/orders/${id}/status`, { status }, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+
+  // seller analytics
+  sellerGetDashboard: (token) => sellerClient.get('/seller/analytics', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  sellerGetCustomers: (token) => sellerClient.get('/seller/customers', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
 };
 
 export default api;

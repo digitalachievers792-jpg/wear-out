@@ -8,6 +8,8 @@ const links = [
   { to: '/admin/orders', label: 'Orders' },
   { to: '/admin/customers', label: 'Customers' },
   { to: '/admin/reviews', label: 'Reviews' },
+  { to: '/admin/shopkeepers', label: 'Shopkeepers' },
+  { to: '/admin/featured-requests', label: 'Featured Requests' },
   { to: '/admin/courier', label: 'Courier Hub' },
   { to: '/admin/logistics', label: 'Logistics AI' },
   { to: '/admin/analytics', label: 'Analytics' },

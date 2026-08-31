@@ -2,10 +2,11 @@ const Product = require('../models/Product');
 
 exports.getProducts = async (req, res) => {
   try {
-    const { category, featured, search } = req.query;
+    const { category, featured, search, gender } = req.query;
     const filter = {};
     if (category) filter.category = category;
     if (featured === 'true') filter.featured = true;
+    if (gender) filter.gender = gender;
     if (search) {
       const re = new RegExp(search.trim(), 'i');
       filter.$or = [{ name: re }, { description: re }, { category: re }];
@@ -29,7 +30,7 @@ exports.getProduct = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, price, sizes, category, inStock, featured, rating } = req.body;
+    const { name, description, price, sizes, category, inStock, featured, rating, gender } = req.body;
     let parsedSizes = sizes;
     if (typeof sizes === 'string') {
       parsedSizes = sizes.split(',').map((s) => s.trim()).filter(Boolean);
@@ -44,6 +45,7 @@ exports.createProduct = async (req, res) => {
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: featured === 'true' || featured === true,
       rating: rating !== undefined ? Number(rating) : 0,
+      gender: gender || 'Unisex',
     });
     await product.save();
     res.status(201).json(product);
@@ -56,12 +58,13 @@ exports.updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
-    const { name, description, price, sizes, category, inStock, featured, rating } = req.body;
+    const { name, description, price, sizes, category, inStock, featured, rating, gender } = req.body;
     if (name !== undefined) product.name = name;
     if (description !== undefined) product.description = description;
     if (price !== undefined) product.price = Number(price);
     if (category !== undefined) product.category = category;
     if (rating !== undefined) product.rating = Number(rating);
+    if (gender !== undefined) product.gender = gender;
     if (sizes !== undefined) {
       let parsed = sizes;
       if (typeof sizes === 'string') parsed = sizes.split(',').map((s) => s.trim()).filter(Boolean);

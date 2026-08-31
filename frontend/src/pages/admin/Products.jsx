@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
 
-const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', inStock: true, featured: false, rating: 0, image: null };
+const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', inStock: true, featured: false, rating: 0, gender: 'Unisex', image: null };
 
 function StarInput({ value, onChange }) {
   const [hover, setHover] = useState(0);
@@ -39,7 +39,7 @@ export default function Products() {
     setEditing(p._id);
     setForm({
       name: p.name, description: p.description, price: p.price, category: p.category,
-      sizes: p.sizes.join(','), inStock: p.inStock, featured: p.featured, rating: p.rating || 0, image: null,
+      sizes: p.sizes.join(','), inStock: p.inStock, featured: p.featured, rating: p.rating || 0, gender: p.gender || 'Unisex', image: null,
     });
   };
 
@@ -54,6 +54,7 @@ export default function Products() {
     fd.append('inStock', form.inStock);
     fd.append('featured', form.featured);
     fd.append('rating', form.rating);
+    fd.append('gender', form.gender);
     if (form.image) fd.append('image', form.image);
 
     try {
@@ -91,6 +92,11 @@ export default function Products() {
               <option key={c}>{c}</option>
             ))}
           </select>
+          <select className="input-field" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+            {['Unisex', 'Male', 'Female'].map((g) => (
+              <option key={g}>{g}</option>
+            ))}
+          </select>
           <div className="md:col-span-2">
             <label className="block text-sm text-slate-600 mb-1">Star Rating</label>
             <StarInput value={form.rating} onChange={(r) => setForm({ ...form, rating: r })} />
@@ -119,6 +125,7 @@ export default function Products() {
               <th className="text-left p-3">Image</th>
               <th className="text-left p-3">Name</th>
               <th className="text-left p-3">Category</th>
+              <th className="text-left p-3">Gender</th>
               <th className="text-left p-3">Price</th>
               <th className="text-left p-3">Actions</th>
             </tr>
@@ -135,6 +142,7 @@ export default function Products() {
                 </td>
                 <td className="p-3 text-ink font-medium">{p.name}</td>
                 <td className="p-3 text-slate-500">{p.category}</td>
+                <td className="p-3 text-slate-500">{p.gender || 'Unisex'}</td>
                 <td className="p-3 text-ink">Rs {p.price.toLocaleString()}</td>
                 <td className="p-3 space-x-2">
                   <button className="text-gold-dark hover:underline" onClick={() => openEdit(p)}>Edit</button>
@@ -143,7 +151,7 @@ export default function Products() {
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan="5" className="p-4 text-center text-slate-400">No products yet.</td></tr>
+              <tr><td colSpan="6" className="p-4 text-center text-slate-400">No products yet.</td></tr>
             )}
           </tbody>
         </table>

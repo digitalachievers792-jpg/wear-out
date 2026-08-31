@@ -13,19 +13,39 @@ export default function Category() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [gender, setGender] = useState('');
 
   useEffect(() => {
     setLoading(true);
+    const params = { category: value };
+    if (gender) params.gender = gender;
     api
-      .getProducts({ category: value })
+      .getProducts(params)
       .then(setProducts)
       .finally(() => setLoading(false));
-  }, [value]);
+  }, [value, gender]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <h1 className="font-display text-5xl text-metallic tracking-wider mb-2 uppercase">{label}</h1>
       <p className="text-slate-500 mb-8">Premium staples from the Wear Out collection.</p>
+
+      {value === 'Un Stitch' && (
+        <div className="flex items-center gap-3 mb-6">
+          <label className="text-sm text-slate-600 font-medium">Filter by:</label>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            className="input-field w-auto"
+          >
+            <option value="">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Unisex">Unisex</option>
+          </select>
+        </div>
+      )}
+
       {loading ? (
         <p className="text-slate-400">Loading…</p>
       ) : products.length === 0 ? (

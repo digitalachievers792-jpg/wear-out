@@ -5,7 +5,7 @@ export default function About() {
     <div className="max-w-4xl mx-auto px-4 py-16">
       <div className="text-center mb-12">
         <WoLogo mode="hero" size={90} className="mx-auto mb-4" />
-        <h1 className="font-display text-6xl text-metallic tracking-widest">WEAR OUT</h1>
+        <h1 className="font-display text-4xl sm:text-6xl text-metallic tracking-widest">WEAR OUT</h1>
         <p className="text-gold tracking-[0.4em] uppercase mt-3 text-sm">Wear Your Confidence</p>
       </div>
       <div className="space-y-6 text-slate-600 leading-relaxed">
