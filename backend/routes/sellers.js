@@ -31,7 +31,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
       sizes: parsedSizes && parsedSizes.length ? parsedSizes : ['S', 'M', 'L', 'XL'],
       category,
       gender: gender || 'Unisex',
-      image: req.file ? req.file.filename : '',
+      image: req.file ? req.file.path : '',
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: false,
       shopkeeper: req.shopkeeper._id,
@@ -60,7 +60,7 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
       if (parsed.length) product.sizes = parsed;
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
-    if (req.file) product.image = req.file.filename;
+    if (req.file) product.image = req.file.path;
     await product.save();
     res.json(product);
   } catch (err) {

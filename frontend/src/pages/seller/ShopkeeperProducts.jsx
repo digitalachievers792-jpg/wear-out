@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
+import { imgUrl } from '../../lib/img';
 
 const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', gender: 'Unisex', inStock: true, image: null };
 
@@ -106,7 +107,7 @@ export default function ShopkeeperProducts() {
             <tbody>
               {products.map((p) => (
                 <tr key={p._id} className="border-t border-slate-100">
-                  <td className="p-3">{p.image ? <img src={`/uploads/${p.image}`} alt={p.name} className="h-12 w-10 object-cover rounded" /> : <span className="text-slate-300">—</span>}</td>
+                  <td className="p-3">{p.image ? <img src={imgUrl(p.image)} alt={p.name} className="h-12 w-10 object-cover rounded" /> : <span className="text-slate-300">—</span>}</td>
                   <td className="p-3 text-ink font-medium">{p.name}</td>
                   <td className="p-3 text-slate-500">{p.category}</td>
                   <td className="p-3 text-ink">Rs {p.price.toLocaleString()}</td>

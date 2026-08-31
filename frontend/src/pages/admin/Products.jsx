@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
+import { imgUrl } from '../../lib/img';
 
 const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', inStock: true, featured: false, rating: 0, gender: 'Unisex', image: null };
 
@@ -135,7 +136,7 @@ export default function Products() {
               <tr key={p._id} className="border-t border-slate-100">
                 <td className="p-3">
                   {p.image ? (
-                    <img src={`/uploads/${p.image}`} alt={p.name} className="h-12 w-10 object-cover rounded" />
+                    <img src={imgUrl(p.image)} alt={p.name} className="h-12 w-10 object-cover rounded" />
                   ) : (
                     <span className="text-slate-300">—</span>
                   )}

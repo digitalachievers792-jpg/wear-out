@@ -41,7 +41,7 @@ exports.createProduct = async (req, res) => {
       price: Number(price),
       sizes: parsedSizes && parsedSizes.length ? parsedSizes : ['S', 'M', 'L', 'XL'],
       category,
-      image: req.file ? req.file.filename : '',
+      image: req.file ? req.file.path : '',
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: featured === 'true' || featured === true,
       rating: rating !== undefined ? Number(rating) : 0,
@@ -72,7 +72,7 @@ exports.updateProduct = async (req, res) => {
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
     if (featured !== undefined) product.featured = featured === 'true' || featured === true;
-    if (req.file) product.image = req.file.filename;
+    if (req.file) product.image = req.file.path;
     await product.save();
     res.json(product);
   } catch (err) {
