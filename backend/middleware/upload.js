@@ -1,6 +1,6 @@
 const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
+const { Readable } = require('stream');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,14 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'wearout/products',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-    transformation: [{ width: 800, height: 1000, crop: 'limit' }],
-  },
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -29,4 +22,18 @@ const upload = multer({
   limits: { fileSize: 8 * 1024 * 1024 },
 });
 
+function uploadToCloudinary(file) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'wearout/products', transformation: [{ width: 800, height: 1000, crop: 'limit' }] },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    Readable.from(file.buffer).pipe(stream);
+  });
+}
+
 module.exports = upload;
+module.exports.uploadToCloudinary = uploadToCloudinary;

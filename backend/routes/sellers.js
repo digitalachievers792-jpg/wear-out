@@ -4,6 +4,7 @@ const { shopkeeperProtect } = require('../middleware/shopkeeperAuth');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const upload = require('../middleware/upload');
+const { uploadToCloudinary } = require('../middleware/upload');
 
 // All routes require shopkeeper auth
 router.use(shopkeeperProtect);
@@ -23,7 +24,11 @@ router.post('/products', upload.single('image'), async (req, res) => {
     const { name, description, price, sizes, category, gender, inStock, featured } = req.body;
     let parsedSizes = sizes;
     if (typeof sizes === 'string') parsedSizes = sizes.split(',').map((s) => s.trim()).filter(Boolean);
-
+    let imageUrl = '';
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file);
+      imageUrl = result.secure_url;
+    }
     const product = new Product({
       name,
       description,
@@ -31,7 +36,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
       sizes: parsedSizes && parsedSizes.length ? parsedSizes : ['S', 'M', 'L', 'XL'],
       category,
       gender: gender || 'Unisex',
-      image: req.file ? req.file.path : '',
+      image: imageUrl,
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: false,
       shopkeeper: req.shopkeeper._id,
@@ -60,7 +65,10 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
       if (parsed.length) product.sizes = parsed;
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
-    if (req.file) product.image = req.file.path;
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file);
+      product.image = result.secure_url;
+    }
     await product.save();
     res.json(product);
   } catch (err) {

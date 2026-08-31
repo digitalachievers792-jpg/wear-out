@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const { uploadToCloudinary } = require('../middleware/upload');
 
 exports.getProducts = async (req, res) => {
   try {
@@ -35,13 +36,18 @@ exports.createProduct = async (req, res) => {
     if (typeof sizes === 'string') {
       parsedSizes = sizes.split(',').map((s) => s.trim()).filter(Boolean);
     }
+    let imageUrl = '';
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file);
+      imageUrl = result.secure_url;
+    }
     const product = new Product({
       name,
       description,
       price: Number(price),
       sizes: parsedSizes && parsedSizes.length ? parsedSizes : ['S', 'M', 'L', 'XL'],
       category,
-      image: req.file ? req.file.path : '',
+      image: imageUrl,
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: featured === 'true' || featured === true,
       rating: rating !== undefined ? Number(rating) : 0,
@@ -72,7 +78,10 @@ exports.updateProduct = async (req, res) => {
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
     if (featured !== undefined) product.featured = featured === 'true' || featured === true;
-    if (req.file) product.image = req.file.path;
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file);
+      product.image = result.secure_url;
+    }
     await product.save();
     res.json(product);
   } catch (err) {
