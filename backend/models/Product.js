@@ -5,7 +5,6 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     description: { type: String, default: '' },
     price: { type: Number, required: true, min: 0 },
-    // multiple selectable size options per product
     sizes: {
       type: [String],
       default: ['S', 'M', 'L', 'XL'],
@@ -16,10 +15,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       enum: ['Shirts', 'Trousers', 'Caps', 'Watches', 'Accessories', 'Shoes', 'Un Stitch'],
     },
-    // owner-set star rating (0–5, allows halves)
     rating: { type: Number, default: 0, min: 0, max: 5 },
     gender: { type: String, enum: ['Male', 'Female', 'Unisex'], default: 'Unisex' },
-    image: { type: String, default: '' }, // stored filename in /uploads/products
+    image: { type: String, default: '' },
+    images: { type: [String], default: [] },
     inStock: { type: Boolean, default: true },
     featured: { type: Boolean, default: false },
     featuredPending: { type: Boolean, default: false },

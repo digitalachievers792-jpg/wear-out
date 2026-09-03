@@ -19,15 +19,21 @@ router.get('/products', async (req, res) => {
   }
 });
 
-router.post('/products', upload.single('image'), async (req, res) => {
+router.post('/products', upload.array('images', 10), async (req, res) => {
   try {
     const { name, description, price, sizes, category, gender, inStock, featured } = req.body;
     let parsedSizes = sizes;
     if (typeof sizes === 'string') parsedSizes = sizes.split(',').map((s) => s.trim()).filter(Boolean);
     let imageUrl = '';
-    if (req.file) {
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(req.files.map((f) => uploadToCloudinary(f)));
+      images = uploads.map((r) => r.secure_url);
+      imageUrl = images[0] || '';
+    } else if (req.file) {
       const result = await uploadToCloudinary(req.file);
       imageUrl = result.secure_url;
+      images = [imageUrl];
     }
     const product = new Product({
       name,
@@ -37,6 +43,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
       category,
       gender: gender || 'Unisex',
       image: imageUrl,
+      images,
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: false,
       shopkeeper: req.shopkeeper._id,
@@ -49,7 +56,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
   }
 });
 
-router.put('/products/:id', upload.single('image'), async (req, res) => {
+router.put('/products/:id', upload.array('images', 10), async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id, shopkeeper: req.shopkeeper._id });
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -65,9 +72,15 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
       if (parsed.length) product.sizes = parsed;
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
-    if (req.file) {
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(req.files.map((f) => uploadToCloudinary(f)));
+      const newImages = uploads.map((r) => r.secure_url);
+      product.images = [...(product.images || []), ...newImages];
+      if (!product.image && product.images.length) product.image = product.images[0];
+    } else if (req.file) {
       const result = await uploadToCloudinary(req.file);
       product.image = result.secure_url;
+      if (!product.images || product.images.length === 0) product.images = [result.secure_url];
     }
     await product.save();
     res.json(product);

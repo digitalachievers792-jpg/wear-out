@@ -7,12 +7,13 @@ const { handleValidation } = require('../middleware/validate');
 const { body } = require('express-validator');
 
 router.get('/', ctrl.getProducts);
+router.get('/featured', ctrl.getFeaturedProducts);
 router.get('/:id', ctrl.getProduct);
 
 router.post(
   '/',
   protect,
-  upload.single('image'),
+  upload.array('images', 10),
   [
     body('name').isString().trim().notEmpty(),
     body('price').isFloat({ min: 0 }),
@@ -24,7 +25,7 @@ router.post(
   ctrl.createProduct
 );
 
-router.put('/:id', protect, upload.single('image'), ctrl.updateProduct);
+router.put('/:id', protect, upload.array('images', 10), ctrl.updateProduct);
 
 router.delete('/:id', protect, ctrl.deleteProduct);
 

@@ -15,7 +15,9 @@ export default function ShopkeeperCustomers() {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-ink mb-4">My Customers</h1>
-      <div className="admin-surface overflow-hidden">
+
+      {/* Desktop table */}
+      <div className="hidden md:block admin-surface overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-slate-500">
@@ -41,6 +43,20 @@ export default function ShopkeeperCustomers() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {customers.length === 0 && <p className="text-slate-400 text-center py-8">No customers yet.</p>}
+        {customers.map((c, i) => (
+          <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
+            <p className="text-ink font-semibold text-sm">{c.fullName}</p>
+            <p className="text-slate-500 text-xs mt-1">{c.whatsapp}</p>
+            {c.email && <p className="text-slate-400 text-xs">{c.email}</p>}
+            {c.city && <p className="text-slate-400 text-xs">{c.city}</p>}
+            {c.address && <p className="text-slate-400 text-xs truncate">{c.address}</p>}
+          </div>
+        ))}
       </div>
     </div>
   );

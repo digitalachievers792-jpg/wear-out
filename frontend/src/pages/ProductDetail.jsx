@@ -4,7 +4,8 @@ import api from '../api';
 import { useCart } from '../context/CartContext';
 import ReviewSection from '../components/ReviewSection';
 import StarRating from '../components/StarRating';
-import { imgUrl } from '../lib/img';
+import ProductCarousel from '../components/ProductCarousel';
+import { getProductImages } from '../lib/img';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -28,6 +29,8 @@ export default function ProductDetail() {
   if (loading) return <p className="text-slate-400 p-10">Loading…</p>;
   if (!product) return <p className="text-slate-400 p-10">Product not found.</p>;
 
+  const images = getProductImages(product);
+
   const handleAdd = () => {
     if (!size) return setError('Please select a size.');
     addItem(product, size, 1);
@@ -43,13 +46,27 @@ export default function ProductDetail() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="grid md:grid-cols-2 gap-10">
         <div className="bg-slate-100 rounded-xl overflow-hidden border border-gold/20">
-          <img src={imgUrl(product.image)} alt={product.name} className="w-full aspect-[3/4] object-cover" />
+          <ProductCarousel images={images} alt={product.name} className="w-full aspect-[3/4]" />
         </div>
         <div>
-          <span className="text-xs uppercase tracking-widest text-gold border border-gold/40 px-2 py-1 rounded">
-            {product.category}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase tracking-widest text-gold border border-gold/40 px-2 py-1 rounded">
+              {product.category}
+            </span>
+            {product.inStock ? (
+              <span className="text-xs uppercase tracking-wider text-green-700 bg-green-100 border border-green-300 px-2 py-1 rounded">
+                ✓ Available in Stock
+              </span>
+            ) : (
+              <span className="text-xs uppercase tracking-wider text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded">
+                Out of Stock
+              </span>
+            )}
+          </div>
           <h1 className="font-display text-5xl text-slate-800 mt-4 tracking-wide">{product.name}</h1>
+          {product.shopName && (
+            <p className="text-sm text-slate-400 mt-1">Sold by <span className="text-gold">{product.shopName}</span></p>
+          )}
           {product.rating > 0 && (
             <div className="flex items-center gap-2 mt-2">
               <StarRating value={product.rating} />
@@ -81,10 +98,10 @@ export default function ProductDetail() {
           {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
 
           <div className="flex gap-3 mt-6">
-            <button onClick={handleAdd} className="btn-outline flex-1">
+            <button onClick={handleAdd} className="btn-outline flex-1" disabled={!product.inStock}>
               Add to Cart
             </button>
-            <button onClick={handleBuyNow} className="btn-gold flex-1">
+            <button onClick={handleBuyNow} className="btn-gold flex-1" disabled={!product.inStock}>
               Buy Now
             </button>
           </div>

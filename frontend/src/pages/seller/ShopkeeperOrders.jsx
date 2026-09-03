@@ -30,7 +30,9 @@ export default function ShopkeeperOrders() {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-ink mb-4">My Orders</h1>
-      <div className="admin-surface overflow-hidden">
+
+      {/* Desktop table */}
+      <div className="hidden md:block admin-surface overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-slate-500">
@@ -68,6 +70,33 @@ export default function ShopkeeperOrders() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {orders.length === 0 && <p className="text-slate-400 text-center py-8">No orders yet.</p>}
+        {orders.map((o) => (
+          <div key={o._id} className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-ink font-semibold text-sm">{o.reference}</p>
+                <p className="text-slate-500 text-xs">{o.customer?.fullName} • {o.customer?.whatsapp}</p>
+              </div>
+              <p className="text-gold font-semibold">Rs {(o.total || 0).toLocaleString()}</p>
+            </div>
+            <div className="text-xs text-slate-600">
+              {o.items?.map((it, i) => (
+                <p key={i}>{it.name} — {it.size} × {it.quantity}</p>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <select value={o.status} onChange={(e) => updateStatus(o._id, e.target.value)} className="text-xs border border-slate-200 rounded px-2 py-1.5 flex-1">
+                {STATUSES.map((s) => <option key={s}>{s}</option>)}
+              </select>
+              <button className="text-gold-dark hover:underline text-xs whitespace-nowrap" onClick={() => copyCustomer(o)}>Copy Info</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -36,11 +36,19 @@ exports.createProduct = async (req, res) => {
     if (typeof sizes === 'string') {
       parsedSizes = sizes.split(',').map((s) => s.trim()).filter(Boolean);
     }
+
     let imageUrl = '';
-    if (req.file) {
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(req.files.map((f) => uploadToCloudinary(f)));
+      images = uploads.map((r) => r.secure_url);
+      imageUrl = images[0] || '';
+    } else if (req.file) {
       const result = await uploadToCloudinary(req.file);
       imageUrl = result.secure_url;
+      images = [imageUrl];
     }
+
     const product = new Product({
       name,
       description,
@@ -48,6 +56,7 @@ exports.createProduct = async (req, res) => {
       sizes: parsedSizes && parsedSizes.length ? parsedSizes : ['S', 'M', 'L', 'XL'],
       category,
       image: imageUrl,
+      images,
       inStock: inStock === 'false' || inStock === false ? false : true,
       featured: featured === 'true' || featured === true,
       rating: rating !== undefined ? Number(rating) : 0,
@@ -78,9 +87,15 @@ exports.updateProduct = async (req, res) => {
     }
     if (inStock !== undefined) product.inStock = inStock === 'false' || inStock === false ? false : true;
     if (featured !== undefined) product.featured = featured === 'true' || featured === true;
-    if (req.file) {
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(req.files.map((f) => uploadToCloudinary(f)));
+      const newImages = uploads.map((r) => r.secure_url);
+      product.images = [...(product.images || []), ...newImages];
+      if (!product.image && product.images.length) product.image = product.images[0];
+    } else if (req.file) {
       const result = await uploadToCloudinary(req.file);
       product.image = result.secure_url;
+      if (!product.images || product.images.length === 0) product.images = [result.secure_url];
     }
     await product.save();
     res.json(product);
@@ -94,6 +109,15 @@ exports.deleteProduct = async (req, res) => {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json({ message: 'Product removed', id: req.params.id });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getFeaturedProducts = async (req, res) => {
+  try {
+    const products = await Product.find({ featured: true }).sort({ createdAt: -1 }).limit(50);
+    res.json(products);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

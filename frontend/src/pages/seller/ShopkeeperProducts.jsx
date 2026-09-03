@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import { imgUrl } from '../../lib/img';
+import { imgUrl, getProductImages } from '../../lib/img';
 
-const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', gender: 'Unisex', inStock: true, image: null };
+const EMPTY = { name: '', description: '', price: '', category: 'Shirts', sizes: 'S,M,L,XL', gender: 'Unisex', inStock: true, images: null };
 
 export default function ShopkeeperProducts() {
   const [products, setProducts] = useState([]);
@@ -17,7 +17,7 @@ export default function ShopkeeperProducts() {
   const openAdd = () => { setEditing(null); setForm(EMPTY); };
   const openEdit = (p) => {
     setEditing(p._id);
-    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, sizes: p.sizes.join(','), gender: p.gender || 'Unisex', inStock: p.inStock, image: null });
+    setForm({ name: p.name, description: p.description, price: p.price, category: p.category, sizes: p.sizes.join(','), gender: p.gender || 'Unisex', inStock: p.inStock, images: null });
   };
 
   const submit = async (e) => {
@@ -30,7 +30,11 @@ export default function ShopkeeperProducts() {
     fd.append('sizes', form.sizes);
     fd.append('gender', form.gender);
     fd.append('inStock', form.inStock);
-    if (form.image) fd.append('image', form.image);
+    if (form.images) {
+      for (let i = 0; i < form.images.length; i++) {
+        fd.append('images', form.images[i]);
+      }
+    }
 
     try {
       if (editing) await api.sellerUpdateProduct(token, editing, fd);
@@ -80,7 +84,11 @@ export default function ShopkeeperProducts() {
           </select>
           <input className="input-field" placeholder="Sizes (comma separated)" value={form.sizes} onChange={(e) => setForm({ ...form, sizes: e.target.value })} />
           <textarea className="input-field md:col-span-2" placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <input type="file" accept="image/*" className="md:col-span-2 text-sm" onChange={(e) => setForm({ ...form, image: e.target.files[0] })} />
+          <div className="md:col-span-2">
+            <label className="block text-sm text-slate-600 mb-1">Product Images (select multiple)</label>
+            <input type="file" accept="image/*" multiple className="w-full text-sm border border-slate-200 rounded-md p-2" onChange={(e) => setForm({ ...form, images: e.target.files })} />
+            {form.images && <p className="text-xs text-slate-400 mt-1">{form.images.length} file(s) selected</p>}
+          </div>
           <label className="flex items-center gap-2 text-sm text-slate-600">
             <input type="checkbox" checked={form.inStock} onChange={(e) => setForm({ ...form, inStock: e.target.checked })} /> In Stock
           </label>
@@ -93,13 +101,14 @@ export default function ShopkeeperProducts() {
 
       <div className="admin-surface overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[600px]">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="text-left p-3">Image</th>
+                <th className="text-left p-3">Images</th>
                 <th className="text-left p-3">Name</th>
                 <th className="text-left p-3">Category</th>
                 <th className="text-left p-3">Price</th>
+                <th className="text-left p-3">Stock</th>
                 <th className="text-left p-3">Status</th>
                 <th className="text-left p-3">Actions</th>
               </tr>
@@ -107,25 +116,41 @@ export default function ShopkeeperProducts() {
             <tbody>
               {products.map((p) => (
                 <tr key={p._id} className="border-t border-slate-100">
-                  <td className="p-3">{p.image ? <img src={imgUrl(p.image)} alt={p.name} className="h-12 w-10 object-cover rounded" /> : <span className="text-slate-300">—</span>}</td>
+                  <td className="p-3">
+                    {p.image ? (
+                      <div className="flex items-center gap-1">
+                        <img src={imgUrl(p.image)} alt={p.name} className="h-12 w-10 object-cover rounded" />
+                        {p.images && p.images.length > 1 && (
+                          <span className="text-[10px] text-slate-400">+{p.images.length - 1}</span>
+                        )}
+                      </div>
+                    ) : <span className="text-slate-300">—</span>}
+                  </td>
                   <td className="p-3 text-ink font-medium">{p.name}</td>
                   <td className="p-3 text-slate-500">{p.category}</td>
                   <td className="p-3 text-ink">Rs {p.price.toLocaleString()}</td>
                   <td className="p-3">
+                    {p.inStock ? (
+                      <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">In Stock</span>
+                    ) : (
+                      <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded">Out</span>
+                    )}
+                  </td>
+                  <td className="p-3">
                     {p.featured && <span className="text-xs bg-gold/10 text-gold-dark px-2 py-1 rounded-full">Featured</span>}
-                    {!p.featured && p.featuredPending && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Featured Request Pending</span>}
+                    {!p.featured && p.featuredPending && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Pending</span>}
                     {!p.featured && !p.featuredPending && <span className="text-xs text-slate-400">—</span>}
                   </td>
                   <td className="p-3 space-x-2">
                     <button className="text-gold-dark hover:underline" onClick={() => openEdit(p)}>Edit</button>
                     {!p.featured && !p.featuredPending && (
-                      <button className="text-blue-500 hover:underline" onClick={() => requestFeatured(p._id)}>★ Request Featured</button>
+                      <button className="text-blue-500 hover:underline" onClick={() => requestFeatured(p._id)}>★ Featured</button>
                     )}
                     <button className="text-red-500 hover:underline" onClick={() => remove(p._id)}>Remove</button>
                   </td>
                 </tr>
               ))}
-              {products.length === 0 && <tr><td colSpan="6" className="p-4 text-center text-slate-400">No products yet.</td></tr>}
+              {products.length === 0 && <tr><td colSpan="7" className="p-4 text-center text-slate-400">No products yet.</td></tr>}
             </tbody>
           </table>
         </div>

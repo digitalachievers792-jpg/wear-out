@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -37,6 +38,7 @@ import { ConfigProvider } from './context/ConfigContext';
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ConfigProvider>
         <AdminAuthProvider>
           <CartProvider>
