@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE = import.meta.env.VITE_API_BASE || '/api';
+const base = (import.meta.env.VITE_API_BASE || '').replace(/\/+$/, '');
+const BASE = base ? `${base}/api` : '/api';
 const client = axios.create({ baseURL: BASE });
 const sellerClient = axios.create({ baseURL: BASE });
 
