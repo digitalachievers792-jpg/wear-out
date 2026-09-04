@@ -11,11 +11,34 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+client.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
+      localStorage.removeItem('wearout_admin_token');
+      localStorage.removeItem('wearout_admin_email');
+      window.location.href = '/admin/login';
+    }
+    return Promise.reject(err);
+  }
+);
+
 sellerClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('wearout_seller_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+sellerClient.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && window.location.pathname.startsWith('/seller') && !window.location.pathname.includes('/seller/login')) {
+      localStorage.removeItem('wearout_seller_token');
+      window.location.href = '/seller/login';
+    }
+    return Promise.reject(err);
+  }
+);
 
 export const api = {
   // public config
@@ -39,9 +62,9 @@ export const api = {
 
   // admin products
   createProduct: (formData) =>
-    client.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+    client.post('/products', formData).then((r) => r.data),
   updateProduct: (id, formData) =>
-    client.put(`/products/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+    client.put(`/products/${id}`, formData).then((r) => r.data),
   deleteProduct: (id) => client.delete(`/products/${id}`).then((r) => r.data),
 
   // admin orders
@@ -82,9 +105,9 @@ export const api = {
   // seller products
   sellerGetProducts: (token) => sellerClient.get('/seller/products', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   sellerCreateProduct: (token, formData) =>
-    sellerClient.post('/seller/products', formData, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+    sellerClient.post('/seller/products', formData, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   sellerUpdateProduct: (token, id, formData) =>
-    sellerClient.put(`/seller/products/${id}`, formData, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
+    sellerClient.put(`/seller/products/${id}`, formData, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   sellerDeleteProduct: (token, id) => sellerClient.delete(`/seller/products/${id}`, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   sellerRequestFeatured: (token, id) => sellerClient.put(`/seller/products/${id}/request-featured`, {}, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
 
